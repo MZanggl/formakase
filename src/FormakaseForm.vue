@@ -8,7 +8,13 @@
 import Vue from "vue";
 
 export default {
-  props: ["value"],
+  props: {
+    value: Object,
+    normalize: {
+      type: Boolean,
+      default: true
+    }
+  },
 
   data() {
     const form = {
@@ -43,6 +49,14 @@ export default {
   methods: {
     async onSubmit() {
       this.form.pending = true;
+      if (this.normalize) {
+        for (const key in this.form.draft) {
+          if (typeof this.form.draft[key] === "string") {
+            this.form.draft[key] = this.form.draft[key].trim();
+          }
+        }
+      }
+
       try {
         await this.$listeners.submit(this.form.draft);
       } catch (error) {

@@ -1,8 +1,12 @@
-## Progressive forms
+## Formakase
+
+Formakase does the things we tend to forget
 
 Features
+- Minimal code for minimal needs
 - All state handled internally. (Think traditional form submissions to a backend)
 - Submit buttons automatically get disabled while the form is submitting
+- Normalization: All strings get trimmed upon submit
 
 ### Most basic form
 
