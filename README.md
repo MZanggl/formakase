@@ -1,19 +1,19 @@
 ## Formakase
 
-Formakase does the things we tend to forget
+With there being so many different small details that come with building forms, writing code for it <strike>is</strike> was rather complex and verbose. Formakase takes care of the things we tend to forget.
 
 Features
 - Minimal code for minimal needs
-- All state handled internally. (Think traditional form submissions to a backend)
+- All state handled internally (Think traditional form submissions to a backend where all you need is a "name" attribute)
 - Submit buttons automatically get disabled while the form is submitting
-- Normalization: All strings get trimmed upon submit
+- Normalization: Strings get trimmed upon submit
 
 ### Most basic form
 
 ```vue
 <template>
 <FormakaseForm @submit="onSubmit">
-  <FormakaseInput name="username" value="initial value" />
+  <FormakaseInput name="username" value="initial value   " />
   <FormakaseInput type="submit"/>
 </FormakaseForm>
 </template>
@@ -22,7 +22,7 @@ Features
 export default {
   methods: {
     onSubmit(draft) {
-      alert(draft) // { username: '<current input value>' }
+      alert(draft) // { username: '<current input value trimmed>' }
     }
   }
 }
@@ -69,8 +69,7 @@ export default {
   },
   methods: {
     onSubmit(draft) {
-      alert(draft)
-      alert(this.form)
+      console.log(draft, this.form)
     }
   }
 }
@@ -79,4 +78,5 @@ export default {
 
 TODO
 - add "disableOnSubmit" prop to Input
+- add support for select and textarea
 - add validation
