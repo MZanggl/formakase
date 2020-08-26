@@ -3,19 +3,39 @@
     v-bind="$props"
     :value="draftValue"
     @input="onInput"
-    :disabled="$props.type === 'submit' && form.pending"
+    :disabled="isDisabled"
   >
 </template>
 
 <script>
 export default {
-  name: "PromiseInput",
-
-  props: ["name", "type", "value"],
+  props: ["name", "type", "value", "disabled", "disableOnSubmit"],
 
   inject: ["formakaseBind", "form"],
 
   computed: {
+    isDisabled() {
+      // parent passing disabled attribute without value or as boolean
+      if (this.disabled === "" || this.disabled) {
+        return true;
+      }
+
+      if (!this.form.pending) {
+        return false;
+      }
+
+      // parent passing attribute without value or as boolean
+      if (this.disableOnSubmit === "" || this.disableOnSubmit) {
+        return true;
+      }
+
+      // for submit buttons, automatically disable it unless explicitely turned off
+      if (this.disableOnSubmit !== false && this.$props.type === "submit") {
+        return true;
+      }
+
+      return false;
+    },
     component() {
       if (this.type === "textarea") {
         return "textarea";

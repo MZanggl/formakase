@@ -13,10 +13,10 @@ Features
 
 ```vue
 <template>
-<FormakaseForm @submit="onSubmit">
-  <FormakaseInput name="username" value="initial value   " />
-  <FormakaseInput type="submit"/>
-</FormakaseForm>
+  <FormakaseForm @submit="onSubmit">
+    <FormakaseInput name="username" value="initial value   " />
+    <FormakaseInput type="submit"/>
+  </FormakaseForm>
 </template>
 
 <script>
@@ -34,11 +34,11 @@ export default {
 
 ```vue
 <template>
-<FormakaseForm @submit="onSubmit" v-slot="form">
-  <FormakaseInput name="username" value="initial value" />
-  <div>Username: {{ form.draft.username }}</div>
-  <FormakaseInput type="submit"/>
-</FormakaseForm>
+  <FormakaseForm @submit="onSubmit" v-slot="form">
+    <FormakaseInput name="username" value="initial value" />
+    <div>Username: {{ form.draft.username }}</div>
+    <FormakaseInput type="submit"/>
+  </FormakaseForm>
 </template>
 
 <script>
@@ -56,11 +56,11 @@ export default {
 
 ```vue
 <template>
-<FormakaseForm @submit="onSubmit" v-model="form">
-  <FormakaseInput name="username" value="initial value" />
-  <div>Username: {{ form.draft.username }}</div>
-  <FormakaseInput type="submit"/>
-</FormakaseForm>
+  <FormakaseForm @submit="onSubmit" v-model="form">
+    <FormakaseInput name="username" value="initial value" />
+    <div>Username: {{ form.draft.username }}</div>
+    <FormakaseInput type="submit"/>
+  </FormakaseForm>
 </template>
 
 <script>
@@ -77,7 +77,41 @@ export default {
 </script>
 ```
 
+### Submission
+
+Submit buttons automatically get disabled on submit.
+
+You can disable it by explicitely turning it off:
+
+```vue
+<template>
+  <FormakaseForm>
+    <FormakaseInput type="submit" :disableOnSubmit="false"/>
+  </FormakaseForm>
+</template>
+```
+
+Likewise, on any other `FormakaseInput` type, you can turn the setting on using the same prop:
+
+```vue
+<template>
+  <FormakaseForm>
+    <FormakaseInput type="email" disableOnSubmit /> 
+  </FormakaseForm>
+</template>
+```
+
+### Normalization
+
+On submission, all strings will automatically get trimmed and updated in the form. You can disable it like this:
+
+```vue
+<template>
+  <FormakaseForm :normalize="false">
+  </FormakaseForm>
+</template>
+```
+
 TODO
-- add "disableOnSubmit" prop to Input
 - add support for select and textarea
-- add validation
+- extend HTML5 validation
