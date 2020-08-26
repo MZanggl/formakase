@@ -1,0 +1,20 @@
+{
+  "name": "formakase",
+  "version": "0.0.0",
+  "description": "Forms that work with you",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MZanggl/formakase.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MZanggl/formakase/issues"
+  },
+  "homepage": "https://github.com/MZanggl/formakase#readme"
+}
