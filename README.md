@@ -7,6 +7,7 @@ Features
 - All state handled internally (Think traditional form submissions to a backend where all you need is a "name" attribute)
 - Submit buttons automatically get disabled while the form is submitting
 - Normalization: Strings get trimmed upon submit
+- You have full control over how your form looks like
 
 ### Most basic form
 

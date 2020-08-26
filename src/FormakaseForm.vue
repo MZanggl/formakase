@@ -19,7 +19,6 @@ export default {
   data() {
     const form = {
       draft: {},
-      error: "",
       pending: false
     };
     return { form };
@@ -60,8 +59,8 @@ export default {
       try {
         await this.$listeners.submit(this.form.draft);
       } catch (error) {
-        this.form.error = error;
-        // set pending and throw error again?
+        this.form.pending = false;
+        throw error
       }
       this.form.pending = false;
     }
