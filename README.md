@@ -5,7 +5,6 @@ With there being so many different small details that come with building forms, 
 Features
 - Minimal code for minimal needs
 - All state handled internally (Think traditional form submissions to a backend where all you need is a "name" attribute)
-- Submit buttons automatically get disabled while the form is submitting
 - Normalization: Strings get trimmed upon submit
 - You have full control over how your form looks like
 
@@ -13,10 +12,10 @@ Features
 
 ```vue
 <template>
-  <FormakaseForm @submit="onSubmit">
-    <FormakaseInput name="username" value="initial value   " />
-    <FormakaseInput type="submit"/>
-  </FormakaseForm>
+  <Formakase @submit="onSubmit">
+    <input name="username" />
+    <input type="submit"/>
+  </Formakase>
 </template>
 
 <script>
@@ -34,11 +33,11 @@ export default {
 
 ```vue
 <template>
-  <FormakaseForm @submit="onSubmit" v-slot="form">
-    <FormakaseInput name="username" value="initial value" />
+  <Formakase @submit="onSubmit" v-slot="form">
+    <input name="username" />
     <div>Username: {{ form.draft.username }}</div>
-    <FormakaseInput type="submit"/>
-  </FormakaseForm>
+    <input type="submit"/>
+  </Formakase>
 </template>
 
 <script>
@@ -56,11 +55,11 @@ export default {
 
 ```vue
 <template>
-  <FormakaseForm @submit="onSubmit" v-model="form">
-    <FormakaseInput name="username" value="initial value" />
+  <Formakase @submit="onSubmit" v-model="form">
+    <input name="username" />
     <div>Username: {{ form.draft.username }}</div>
-    <FormakaseInput type="submit"/>
-  </FormakaseForm>
+    <input type="submit"/>
+  </Formakase>
 </template>
 
 <script>
@@ -77,27 +76,19 @@ export default {
 </script>
 ```
 
-### Submission
+### Specifying default values
 
-Submit buttons automatically get disabled on submit.
+Use `data-value` over `value`.
 
-You can disable it by explicitely turning it off:
+### Disabling on submit
 
-```vue
-<template>
-  <FormakaseForm>
-    <FormakaseInput type="submit" :disableOnSubmit="false"/>
-  </FormakaseForm>
-</template>
-```
-
-Likewise, on any other `FormakaseInput` type, you can turn the setting on using the same prop:
+Formakase tracks when the submission is currently pending. Use "pending" to easily disable any inputs.
 
 ```vue
 <template>
-  <FormakaseForm>
-    <FormakaseInput type="email" disableOnSubmit /> 
-  </FormakaseForm>
+  <Formakase v-slot="form">
+    <input type="submit" :disabled="form.pending"/>
+  </Formakase>
 </template>
 ```
 
@@ -107,11 +98,22 @@ On submission, all strings will automatically get trimmed and updated in the for
 
 ```vue
 <template>
-  <FormakaseForm :normalize="false">
-  </FormakaseForm>
+  <Formakase :normalize="false">
+  </Formakase>
 </template>
 ```
 
-TODO
-- add support for select and textarea
-- extend HTML5 validation
+### Validation (TODO)
+
+Formakase embraces HTML5 validation. Most things form libraries validate are already supported natively. I recommend you learning about the various input attributes such as `type`, `minlength`, `min`, `max`, `maxlength`, `required` and `pattern`.
+
+Formakase extends on the idea with
+- custom validations
+- running validations either live, or only on submit
+- reporting errors using HTML5 or letting you handle them yourself
+
+<details>
+  <summary>A quick rundown on HTML5 validation</summary>
+    1. On form submission, all inputs are validated
+    2. If a field fails validation, it will receive focus, the elements' [`:invalid`](https://developer.mozilla.org/en-US/docs/Web/CSS/:invalid) styling and the error displayed.
+</details>

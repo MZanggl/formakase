@@ -1,11 +1,9 @@
-import FormakaseForm from "./FormakaseForm";
-import FormakaseInput from "./FormakaseInput";
+import Formakase from "./Formakase";
 
-const Formakase = {
+const FormakasePlugin = {
   install(Vue) {
-    Vue.component("FormakaseForm", FormakaseForm);
-    Vue.component("FormakaseInput", FormakaseInput);
+    Vue.component("Formakase", Formakase);
   }
 };
 
-export default Formakase;
+export default FormakasePlugin;
