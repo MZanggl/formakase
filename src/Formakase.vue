@@ -13,6 +13,10 @@ export default {
     normalize: {
       type: Boolean,
       default: true
+    },
+    disableOnSubmit: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -84,6 +88,13 @@ export default {
         return acc;
       }, {});
     },
+    disableSubmitButtons(value) {
+      if (!this.disableOnSubmit) return;
+
+      [...this.$refs.form.elements]
+        .filter(el => ["BUTTON", "INPUT"].includes(el.tagName) && el.type === 'submit')
+        .map(el => (el.disabled = value));
+    },
     async onSubmit() {
       this.form.pending = true;
       if (this.normalize) {
@@ -94,13 +105,20 @@ export default {
         }
       }
 
+      this.disableSubmitButtons(true);
+
+      const finalize = () => {
+        this.form.pending = false;
+        this.disableSubmitButtons(false);
+      };
+
       try {
         await this.$listeners.submit(this.form.draft);
       } catch (error) {
-        this.form.pending = false;
+        finalize();
         throw error;
       }
-      this.form.pending = false;
+      finalize();
     }
   }
 };

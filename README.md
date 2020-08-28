@@ -5,6 +5,7 @@ With there being so many different small details that come with building forms, 
 Features
 - Minimal code for minimal needs
 - All state handled internally (Think traditional form submissions to a backend where all you need is a "name" attribute)
+- Submit buttons automatically get disabled on form submit
 - Normalization: Strings get trimmed upon submit
 - You have full control over how your form looks like
 
@@ -82,15 +83,18 @@ Use `data-value` over `value`.
 
 ### Disabling on submit
 
-Formakase tracks when the submission is currently pending. Use "pending" to easily disable any inputs.
+Formakase automatically disables submit buttons while the submission is pending.
+If you want to handle it yourself, you can set `disableOnSubmit` to false and check `form.pending`:
 
 ```vue
 <template>
-  <Formakase v-slot="form">
+  <Formakase v-slot="form" :disableOnSubmit="false">
     <input type="submit" :disabled="form.pending"/>
   </Formakase>
 </template>
 ```
+
+> To disable all inputs, wrap them in `<fieldset :disabled="form.pending">`
 
 ### Normalization
 
