@@ -14,7 +14,7 @@ export default {
       type: Boolean,
       default: true
     },
-    disableOnSubmit: {
+    autoDisable: {
       type: Boolean,
       default: true
     }
@@ -89,7 +89,7 @@ export default {
       }, {});
     },
     disableSubmitButtons(value) {
-      if (!this.disableOnSubmit) return;
+      if (!this.autoDisable) return;
 
       [...this.$refs.form.elements]
         .filter(el => ["BUTTON", "INPUT"].includes(el.tagName) && el.type === 'submit')

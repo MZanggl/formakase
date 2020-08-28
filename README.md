@@ -84,11 +84,11 @@ Use `data-value` over `value`.
 ### Disabling on submit
 
 Formakase automatically disables submit buttons while the submission is pending.
-If you want to handle it yourself, you can set `disableOnSubmit` to false and check `form.pending`:
+If you want to handle it yourself, you can set `autoDisable` to false and check `form.pending`:
 
 ```vue
 <template>
-  <Formakase v-slot="form" :disableOnSubmit="false">
+  <Formakase v-slot="form" :autoDisable="false">
     <input type="submit" :disabled="form.pending"/>
   </Formakase>
 </template>
