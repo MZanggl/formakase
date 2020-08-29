@@ -79,7 +79,16 @@ export default {
 
 ### Specifying default values
 
-Use `data-value` over `value`.
+Use `data-value` over `value`. Specifying "v-bind:value" without "@input" would not make it possible to edit text.
+The text inside `data-value` will be placed in the input only upon mounting. Make sure you have all data you need at that point.
+
+```vue
+<template>
+  <Formakase v-slot="form">
+    <input type="text" data-value="default value" />
+  </Formakase>
+</template>
+```
 
 ### Disabling on submit
 
