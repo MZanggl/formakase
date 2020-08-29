@@ -17,6 +17,14 @@ export default {
     autoDisable: {
       type: Boolean,
       default: true
+    },
+    reportValidity: {
+      type: Boolean,
+      default: true
+    },
+    live: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -59,15 +67,28 @@ export default {
   },
 
   methods: {
-    onInput(event) {
-      if (event.target.name) {
-        Vue.set(this.form.draft, event.target.name, event.target.value);
+    async onInput(event) {
+      if (!e.target.name) return;
+      Vue.set(this.form.draft, e.target.name, e.target.value);
+      if (this.live) {
+        // TODO: use watch to also catch v-model changes
+        await this.validate([e.target])
+      } else if (this.form.errors[e.target.name]) {
+        Vue.delete(this.form.errors, e.target.name);
       }
     },
     collectElements() {
       return [...this.$refs.form.elements]
         .filter(element => element.tagName === "INPUT")
         .filter(element => element.name);
+    },
+    async getValidationMessage(el) {
+      if (!el.validity.valid && !el.validity.customError) {
+        // TODO custom error message
+        return el.validationMessage;
+      }
+
+      return "";
     },
     collectFields(init) {
       return this.collectElements().reduce((acc, el) => {
@@ -95,8 +116,39 @@ export default {
         .filter(el => ["BUTTON", "INPUT"].includes(el.tagName) && el.type === 'submit')
         .map(el => (el.disabled = value));
     },
+    async validate(elements) {
+      const errors = {};
+      for (const el of elements) {
+        const message = await this.getValidationMessage(el);
+        if (this.reportValidity) {
+          el.setCustomValidity(message);
+          el.reportValidity();
+          if (message) return false;
+        }
+
+        if (message) {
+          errors[el.name] = message;
+        }
+      }
+
+      Vue.set(this.form, "errors", errors);
+
+      if (Object.keys(errors).length > 0) {
+        return false;
+      }
+
+      return true;
+    },
     async onSubmit() {
       this.form.pending = true;
+      
+      this.disableSubmitButtons(true);
+
+      const finalize = () => {
+        this.form.pending = false;
+        this.disableSubmitButtons(false);
+      };
+
       if (this.normalize) {
         for (const key in this.form.draft) {
           if (typeof this.form.draft[key] === "string") {
@@ -105,12 +157,9 @@ export default {
         }
       }
 
-      this.disableSubmitButtons(true);
-
-      const finalize = () => {
-        this.form.pending = false;
-        this.disableSubmitButtons(false);
-      };
+      if (!await this.validate(this.collectElements())) {
+        return finalize();
+      }
 
       try {
         await this.$listeners.submit(this.form.draft);

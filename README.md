@@ -120,13 +120,50 @@ On submission, all strings will automatically get trimmed and updated in the for
 
 Formakase embraces HTML5 validation. Most things form libraries validate are already supported natively. I recommend you learning about the various input attributes such as `type`, `minlength`, `min`, `max`, `maxlength`, `required` and `pattern`.
 
-Formakase extends on the idea with
-- custom validations
-- running validations either live, or only on submit
-- reporting errors using HTML5 or letting you handle them yourself
+#### Validate live or on submit
 
-<details>
-  <summary>A quick rundown on HTML5 validation</summary>
-    1. On form submission, all inputs are validated
-    2. If a field fails validation, it will receive focus, the elements' [`:invalid`](https://developer.mozilla.org/en-US/docs/Web/CSS/:invalid) styling and the error displayed.
-</details>
+By default, inputs will be validated on submit.
+
+```vue
+<template>
+  <Formakase @submit="onSubmit">
+    <input name="username" required />
+    <input type="submit"/>
+  </Formakase>
+</template>
+```
+
+Use the `live` prop to validate on every input.
+
+```vue
+<template>
+  <Formakase live @submit="onSubmit">
+    <input name="username" required />
+    <input type="submit"/>
+  </Formakase>
+</template>
+```
+
+#### Report validation
+
+By default, validation will be reported using HTML5. You can manage errors yourself by setting `reportValidity` to false.
+
+```vue
+<template>
+  <Formakase :reportValidity="false" @submit="onSubmit" v-slot="form">
+    <input name="username" required />
+    {{ form.errors.username }}
+    <input type="submit"/>
+  </Formakase>
+</template>
+```
+
+Don't forget that with HTML5 validation you can style invalid fields using the [`:invalid`](https://developer.mozilla.org/en-US/docs/Web/CSS/:invalid) pseudo-class.
+
+#### Custom error messages
+
+> TODO
+
+#### Custom validations
+
+> TODO
