@@ -131,6 +131,21 @@ export default {
         }
       }
 
+      if (this.$listeners.validate) {
+        const draft = this.collectFields();
+        const blame = (name, message) => {
+          if (this.reportValidity) {
+            const el = elements.find(el => el.name === name);
+            el.setCustomValidity(message);
+            el.reportValidity();
+            return false;
+          } else {
+            errors[name] = message;
+          }
+        }
+        await this.$listeners.validate(draft, blame);
+      }
+
       Vue.set(this.form, "errors", errors);
 
       if (Object.keys(errors).length > 0) {
