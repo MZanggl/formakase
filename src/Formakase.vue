@@ -118,32 +118,25 @@ export default {
     },
     async validate(elements) {
       const errors = {};
-      for (const el of elements) {
-        const message = await this.getValidationMessage(el);
-        if (this.reportValidity) {
-          el.setCustomValidity(message);
-          el.reportValidity();
-          if (message) return false;
-        }
 
-        if (message) {
-          errors[el.name] = message;
+      const toggleError = (element, message) => {
+        if (this.reportValidity) {
+          element.setCustomValidity(message);
+          element.reportValidity();
+        } else if (message) {
+          errors[element.name] = message;
         }
       }
 
+      for (const el of elements) {
+        const message = await this.getValidationMessage(el);
+        toggleError(el, message);
+        if (this.reportValidity && message) return false;
+      }
+
       if (this.$listeners.validate) {
-        const draft = this.makeDraft(elements);
-        const blame = (name, message) => {
-          if (this.reportValidity) {
-            const el = elements.find(el => el.name === name);
-            el.setCustomValidity(message);
-            el.reportValidity();
-            return false;
-          } else {
-            errors[name] = message;
-          }
-        }
-        await this.$listeners.validate(draft, blame);
+        const blame = (name, message) => toggleError(elements.find(el => el.name === name), message);
+        await this.$listeners.validate(this.makeDraft(elements), blame);
       }
 
       Vue.set(this.form, "errors", errors);
