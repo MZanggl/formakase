@@ -166,4 +166,23 @@ Don't forget that with HTML5 validation you can style invalid fields using the [
 
 #### Custom validations
 
-> TODO
+```vue
+<template>
+  <Formakase @validate="validate">
+    <input name="username" />
+    <input type="submit"/>
+  </Formakase>
+</template>
+
+<script>
+export default {
+  methods: {
+    validate(draft, blame) {
+      if (draft.username === 'something-bad') {
+        blame('username', 'Dont write something bad!')
+      }
+    }
+  }
+}
+</script>
+```
