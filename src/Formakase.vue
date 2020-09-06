@@ -39,12 +39,12 @@ export default {
   },
 
   mounted() {
-    Vue.set(this.form, "draft", this.collectFields(true));
+    Vue.set(this.form, "draft", this.makeDraft(this.collectElements(), true));
 
     this.$refs.form.addEventListener("input", this.onInput);
 
     const mutationObserver = new MutationObserver(() => {
-      Vue.set(this.form, "draft", this.collectFields());
+      Vue.set(this.form, "draft", this.makeDraft(this.collectElements()));
     });
 
     mutationObserver.observe(this.$refs.form, { childList: true });
@@ -90,8 +90,8 @@ export default {
 
       return "";
     },
-    collectFields(init) {
-      return this.collectElements().reduce((acc, el) => {
+    makeDraft(elements, init) {
+      return elements.reduce((acc, el) => {
         let value = el.value;
         if (init) {
           value = el.getAttribute("data-value");
@@ -132,7 +132,7 @@ export default {
       }
 
       if (this.$listeners.validate) {
-        const draft = this.collectFields();
+        const draft = this.makeDraft(elements);
         const blame = (name, message) => {
           if (this.reportValidity) {
             const el = elements.find(el => el.name === name);
