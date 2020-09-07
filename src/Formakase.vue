@@ -6,39 +6,14 @@
 
 <script>
 import Vue from "vue";
+import { getValidationMessage } from './validation'
+import { formakaseProps, defaultForm } from './constants'
 
 export default {
-  props: {
-    value: Object,
-    normalize: {
-      type: Boolean,
-      default: true
-    },
-    autoDisable: {
-      type: Boolean,
-      default: true
-    },
-    reportValidity: {
-      type: Boolean,
-      default: true
-    },
-    live: {
-      type: Boolean,
-      default: false
-    },
-    messages: {
-      type: Object,
-    }
-  },
+  props: formakaseProps,
 
   data() {
-    const form = {
-      draft: {},
-      pending: false,
-      errors: {}
-    };
-
-    return { form, refs: {} };
+    return { form: defaultForm, refs: {} };
   },
 
   mounted() {
@@ -51,6 +26,7 @@ export default {
     });
 
     mutationObserver.observe(this.$refs.form, { childList: true });
+    // TODO disconnect observer beforeDestroy
   },
 
   beforeDestroy() {
@@ -81,22 +57,7 @@ export default {
       }
     },
     collectElements() {
-      return [...this.$refs.form.elements]
-        .filter(element => element.tagName === "INPUT")
-        .filter(element => element.name);
-    },
-    async getValidationMessage(el) {
-      if (el.validity.valid || el.validity.customError) return '';
-
-      if (this.messages) {
-        for (const validityKey in this.messages) {
-          if (!el.validity[validityKey]) continue;
-          const msg = this.messages[validityKey]
-          return typeof msg === 'function' ? msg(el) : msg
-        }
-      }
-
-      return el.validationMessage;
+      return [...this.$refs.form.elements].filter(element => element.tagName === "INPUT" && !!element.name);
     },
     makeDraft(elements, init) {
       return elements.reduce((acc, el) => {
@@ -137,7 +98,7 @@ export default {
       }
 
       for (const el of elements) {
-        const message = await this.getValidationMessage(el);
+        const message = await this.getValidationMessage(this.messages, el);
         toggleError(el, message);
         if (this.reportValidity && message) return false;
       }
@@ -149,11 +110,7 @@ export default {
 
       Vue.set(this.form, "errors", errors);
 
-      if (Object.keys(errors).length > 0) {
-        return false;
-      }
-
-      return true;
+      return Object.keys(errors).length === 0
     },
     async onSubmit() {
       this.form.pending = true;
