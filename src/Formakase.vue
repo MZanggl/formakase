@@ -6,8 +6,9 @@
 
 <script>
 import Vue from "vue";
-import { getValidationMessage } from './validation'
+import { collectErrors } from './validation'
 import { formakaseProps, defaultForm } from './constants'
+import { makeDraft, disableSubmitButtons, reportHTML5Message } from './form-fields'
 
 export default {
   props: formakaseProps,
@@ -17,20 +18,20 @@ export default {
   },
 
   mounted() {
-    Vue.set(this.form, "draft", this.makeDraft(this.collectElements(), true));
+    Vue.set(this.form, "draft", makeDraft(this.collectElements(), true));
 
     this.$refs.form.addEventListener("input", this.onInput);
 
     const mutationObserver = new MutationObserver(() => {
-      Vue.set(this.form, "draft", this.makeDraft(this.collectElements()));
+      Vue.set(this.form, "draft", makeDraft(this.collectElements()));
     });
 
     mutationObserver.observe(this.$refs.form, { childList: true });
-    // TODO disconnect observer beforeDestroy
   },
 
   beforeDestroy() {
     this.$refs.form.removeEventListener("input", this.onInput);
+    // TODO disconnect observer beforeDestroy
   },
 
   watch: {
@@ -59,67 +60,27 @@ export default {
     collectElements() {
       return [...this.$refs.form.elements].filter(element => element.tagName === "INPUT" && !!element.name);
     },
-    makeDraft(elements, init) {
-      return elements.reduce((acc, el) => {
-        let value = el.value;
-        if (init) {
-          value = el.getAttribute("data-value");
-          el.value = value;
-        }
-
-        if (el.type === "number") {
-          value = Number(value);
-        } else if (el.type === "checkbox") {
-          value = el.checked;
-        }
-        // TODO: date, range
-
-        acc[el.name] = value;
-        return acc;
-      }, {});
-    },
-    disableSubmitButtons(value) {
-      if (!this.autoDisable) return;
-
-      [...this.$refs.form.elements]
-        .filter(el => ["BUTTON", "INPUT"].includes(el.tagName) && el.type === 'submit')
-        .map(el => (el.disabled = value));
-    },
     async validate(elements) {
-      const errors = {};
+      const errors = await collectErrors(elements, this.$listeners.validate, this.messages, this.reportValidity)
 
-      const toggleError = (element, message) => {
-        if (this.reportValidity) {
-          element.setCustomValidity(message);
-          element.reportValidity();
-        } else if (message) {
-          errors[element.name] = message;
-        }
-      }
-
-      for (const el of elements) {
-        const message = await this.getValidationMessage(this.messages, el);
-        toggleError(el, message);
-        if (this.reportValidity && message) return false;
-      }
-
-      if (this.$listeners.validate) {
-        const blame = (name, message) => toggleError(elements.find(el => el.name === name), message);
-        await this.$listeners.validate(this.makeDraft(elements), blame);
+      if (errors.length > 0 && this.reportValidity) {
+        const key = Object.keys(errors)[0];
+        const element = this.$refs.form.elements[key];
+        reportHTML5Message(element, errors[key]);
+        return false;
       }
 
       Vue.set(this.form, "errors", errors);
-
       return Object.keys(errors).length === 0
     },
     async onSubmit() {
       this.form.pending = true;
-      
-      this.disableSubmitButtons(true);
+      const allFields = [...this.$refs.form.elements]
+      this.autoDisable && disableSubmitButtons(allFields, true);
 
       const finalize = () => {
         this.form.pending = false;
-        this.disableSubmitButtons(false);
+        this.autoDisable && disableSubmitButtons(allFields, false);
       };
 
       if (this.normalize) {
