@@ -160,10 +160,6 @@ By default, validation will be reported using HTML5. You can manage errors yours
 
 Don't forget that with HTML5 validation you can style invalid fields using the [`:invalid`](https://developer.mozilla.org/en-US/docs/Web/CSS/:invalid) pseudo-class.
 
-#### Custom error messages
-
-> TODO
-
 #### Custom validations
 
 ```vue
@@ -186,3 +182,33 @@ export default {
 }
 </script>
 ```
+
+#### Custom error messages
+
+For default HTML5 validations you can provide alternative messages.
+
+```vue
+<template>
+  <Formakase :messages="messages">
+    <input name="username" />
+    <input type="submit"/>
+  </Formakase>
+</template>
+
+<script>
+export default {
+  computed: {
+    messages() {
+      return {
+        valueMissing(element) { // define as function
+          return `Field ${element.name} is required!`
+        },
+        tooShort: 'This is too short!' // or as a string
+      }
+    }
+  }
+}
+</script>
+```
+
+For the available keys, see the documentation for [validityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState).

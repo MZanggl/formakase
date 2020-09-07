@@ -25,6 +25,9 @@ export default {
     live: {
       type: Boolean,
       default: false
+    },
+    messages: {
+      type: Object,
     }
   },
 
@@ -83,12 +86,17 @@ export default {
         .filter(element => element.name);
     },
     async getValidationMessage(el) {
-      if (!el.validity.valid && !el.validity.customError) {
-        // TODO custom error message
-        return el.validationMessage;
+      if (el.validity.valid || el.validity.customError) return '';
+
+      if (this.messages) {
+        for (const validityKey in this.messages) {
+          if (!el.validity[validityKey]) continue;
+          const msg = this.messages[validityKey]
+          return typeof msg === 'function' ? msg(el) : msg
+        }
       }
 
-      return "";
+      return el.validationMessage;
     },
     makeDraft(elements, init) {
       return elements.reduce((acc, el) => {
