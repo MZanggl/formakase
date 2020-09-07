@@ -116,7 +116,7 @@ On submission, all strings will automatically get trimmed and updated in the for
 </template>
 ```
 
-### Validation (TODO)
+### Validation
 
 Formakase embraces HTML5 validation. Most things form libraries validate are already supported natively. I recommend you learning about the various input attributes such as `type`, `minlength`, `min`, `max`, `maxlength`, `required` and `pattern`.
 

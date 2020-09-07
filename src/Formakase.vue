@@ -67,7 +67,7 @@ export default {
   },
 
   methods: {
-    async onInput(event) {
+    async onInput(e) {
       if (!e.target.name) return;
       Vue.set(this.form.draft, e.target.name, e.target.value);
       if (this.live) {
