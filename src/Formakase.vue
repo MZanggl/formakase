@@ -49,7 +49,14 @@ export default {
   methods: {
     async onInput(e) {
       if (!e.target.name) return;
-      Vue.set(this.form.draft, e.target.name, e.target.value);
+
+      let value = e.target.value;
+      // TODO convert dates and other input types
+      if (e.target.type === "number") {
+        value = parseInt(value, 10);
+      }
+      Vue.set(this.form.draft, e.target.name, value);
+
       if (this.live) {
         // TODO: use watch to also catch v-model changes
         await this.validate([e.target])
