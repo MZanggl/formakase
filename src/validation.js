@@ -1,16 +1,30 @@
-import { makeDraft } from './form-fields'
+import { makeDraft } from "./form-fields";
+
+const validityKeys = [
+  "valueMissing",
+  "typeMismatch",
+  "tooShort",
+  "tooLong",
+  "stepMismatch",
+  "rangeUnderflow",
+  "rangeOverflow",
+  "patternMismatch",
+  "badInput"
+];
 
 export async function getValidationMessage(messages, el) {
-  if (el.validity.valid || el.validity.customError) return '';
+  if (el.validity.valid) return "";
 
-  if (messages) {
-    for (const key in messages) {
-      if (!el.validity[key]) continue;
-      return typeof messages[key] === 'function' ? await messages[key](el) : messages[key]
+  for (const key of validityKeys) {
+    if (!el.validity[key]) continue;
+    if (messages && messages[key]) {
+      return typeof messages[key] === "function"
+        ? await messages[key](el)
+        : messages[key];
+    } else {
+      return el.validationMessage;
     }
   }
-
-  return el.validationMessage;
 }
 
 export async function collectErrors(elements, customValidate, messages, bails) {
@@ -20,7 +34,7 @@ export async function collectErrors(elements, customValidate, messages, bails) {
     const message = await getValidationMessage(messages, el);
     if (message) {
       errors[el.name] = message;
-      if (bails) return [message];
+      if (bails) return errors;
     }
   }
 

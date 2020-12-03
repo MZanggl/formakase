@@ -146,7 +146,7 @@ Use the `live` prop to validate on every input.
 
 #### Report validation
 
-By default, validation will be reported using HTML5. You can manage errors yourself by setting `reportValidity` to false.
+Access errors using `form.errors`. Messages will also be reported using HTML5. You can turn this off by setting `reportValidity` to false.
 
 ```vue
 <template>

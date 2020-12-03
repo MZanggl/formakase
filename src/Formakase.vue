@@ -49,34 +49,37 @@ export default {
   },
 
   methods: {
+    collectElements() {
+      return [...this.$refs.form.elements].filter(element => element.tagName === "INPUT" && !!element.name);
+    },
     async onInput(e) {
       if (!e.target.name) return;
 
       const value = parseInputValue(e.target);
       Vue.set(this.form.draft, e.target.name, value);
 
-      if (this.live) {
-        // TODO: use watch to also catch v-model changes
-        await this.validate([e.target])
-      } else if (this.form.errors[e.target.name]) {
+      if (this.form.errors[e.target.name]) {
         Vue.delete(this.form.errors, e.target.name);
+        this.reportValidity && reportHTML5Message(e.target, "");
       }
-    },
-    collectElements() {
-      return [...this.$refs.form.elements].filter(element => element.tagName === "INPUT" && !!element.name);
+
+      if (this.live) {
+        // TODO: validate v-model changes
+        await this.validate([e.target])
+      }
     },
     async validate(elements) {
       const errors = await collectErrors(elements, this.$listeners.validate, this.messages, this.reportValidity)
+      const errorKeys = Object.keys(errors);
 
-      if (errors.length > 0 && this.reportValidity) {
-        const key = Object.keys(errors)[0];
+      if (errorKeys.length > 0 && this.reportValidity) {
+        const key = errorKeys[0];
         const element = this.$refs.form.elements[key];
         reportHTML5Message(element, errors[key]);
-        return false;
       }
 
       Vue.set(this.form, "errors", errors);
-      return Object.keys(errors).length === 0
+      return errorKeys.length === 0
     },
     async onSubmit() {
       this.form.pending = true;
