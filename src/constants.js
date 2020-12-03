@@ -8,10 +8,6 @@ export const formakaseProps = {
     type: Boolean,
     default: true
   },
-  reportValidity: {
-    type: Boolean,
-    default: true
-  },
   live: {
     type: Boolean,
     default: false

@@ -118,7 +118,7 @@ On submission, all strings will automatically get trimmed and updated in the for
 
 ### Validation
 
-Formakase embraces HTML5 validation. Most things form libraries validate are already supported natively. I recommend you learning about the various input attributes such as `type`, `minlength`, `min`, `max`, `maxlength`, `required` and `pattern`.
+Most things form libraries validate are already supported natively. I recommend you learning about the various input attributes such as `type`, `minlength`, `min`, `max`, `maxlength`, `required` and `pattern`.
 
 #### Validate live or on submit
 
@@ -144,13 +144,13 @@ Use the `live` prop to validate on every input.
 </template>
 ```
 
-#### Report validation
+#### Validation messages
 
-Access errors using `form.errors`. Messages will also be reported using HTML5. You can turn this off by setting `reportValidity` to false.
+Access errors using `form.errors`. The messages come directly from the browser (same as with HTML5 form validation).
 
 ```vue
 <template>
-  <Formakase :reportValidity="false" @submit="onSubmit" v-slot="form">
+  <Formakase @submit="onSubmit" v-slot="form">
     <input name="username" required />
     {{ form.errors.username }}
     <input type="submit"/>
@@ -158,9 +158,37 @@ Access errors using `form.errors`. Messages will also be reported using HTML5. Y
 </template>
 ```
 
-Don't forget that with HTML5 validation you can style invalid fields using the [`:invalid`](https://developer.mozilla.org/en-US/docs/Web/CSS/:invalid) pseudo-class.
+However, you can provide alternative messages.
+
+```vue
+<template>
+  <Formakase :messages="messages">
+    <input name="username" />
+    <input type="submit"/>
+  </Formakase>
+</template>
+
+<script>
+export default {
+  computed: {
+    messages() {
+      return {
+        valueMissing(element) { // define as a function
+          return `Field ${element.name} is required!`
+        },
+        tooShort: 'This is too short!' // or as a string
+      }
+    }
+  }
+}
+</script>
+```
+
+For the available keys, see the documentation for [validityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState).
 
 #### Custom validations
+
+If you need something more complex, pass a custom validate method.
 
 ```vue
 <template>
@@ -182,33 +210,3 @@ export default {
 }
 </script>
 ```
-
-#### Custom error messages
-
-For default HTML5 validations you can provide alternative messages.
-
-```vue
-<template>
-  <Formakase :messages="messages">
-    <input name="username" />
-    <input type="submit"/>
-  </Formakase>
-</template>
-
-<script>
-export default {
-  computed: {
-    messages() {
-      return {
-        valueMissing(element) { // define as function
-          return `Field ${element.name} is required!`
-        },
-        tooShort: 'This is too short!' // or as a string
-      }
-    }
-  }
-}
-</script>
-```
-
-For the available keys, see the documentation for [validityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState).

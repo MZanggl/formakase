@@ -27,14 +27,13 @@ export async function getValidationMessage(messages, el) {
   }
 }
 
-export async function collectErrors(elements, customValidate, messages, bails) {
+export async function collectErrors(elements, customValidate, messages) {
   const errors = {};
 
   for (const el of elements) {
     const message = await getValidationMessage(messages, el);
     if (message) {
       errors[el.name] = message;
-      if (bails) return errors;
     }
   }
 

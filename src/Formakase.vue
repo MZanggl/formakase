@@ -8,7 +8,7 @@
 import Vue from "vue";
 import { collectErrors } from './validation'
 import { formakaseProps, defaultForm } from './constants'
-import { makeDraft, disableSubmitButtons, reportHTML5Message, parseInputValue, setDefaultValues } from './form-fields'
+import { makeDraft, disableSubmitButtons, parseInputValue, setDefaultValues } from './form-fields'
 
 export default {
   props: formakaseProps,
@@ -60,7 +60,6 @@ export default {
 
       if (this.form.errors[e.target.name]) {
         Vue.delete(this.form.errors, e.target.name);
-        this.reportValidity && reportHTML5Message(e.target, "");
       }
 
       if (this.live) {
@@ -69,17 +68,9 @@ export default {
       }
     },
     async validate(elements) {
-      const errors = await collectErrors(elements, this.$listeners.validate, this.messages, this.reportValidity)
-      const errorKeys = Object.keys(errors);
-
-      if (errorKeys.length > 0 && this.reportValidity) {
-        const key = errorKeys[0];
-        const element = this.$refs.form.elements[key];
-        reportHTML5Message(element, errors[key]);
-      }
-
+      const errors = await collectErrors(elements, this.$listeners.validate, this.messages)
       Vue.set(this.form, "errors", errors);
-      return errorKeys.length === 0
+      return Object.keys(errors).length === 0
     },
     async onSubmit() {
       this.form.pending = true;

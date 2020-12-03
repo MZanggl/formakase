@@ -30,8 +30,3 @@ export function makeDraft(elements) {
 export function disableSubmitButtons(elements, value) {
   elements.filter(el => ["BUTTON", "INPUT"].includes(el.tagName) && el.type === 'submit').map(el => (el.disabled = value));
 }
-
-export function reportHTML5Message(element, message) {
-  element.setCustomValidity(message);
-  element.reportValidity();
-}
