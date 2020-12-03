@@ -8,7 +8,7 @@
 import Vue from "vue";
 import { collectErrors } from './validation'
 import { formakaseProps, defaultForm } from './constants'
-import { makeDraft, disableSubmitButtons, reportHTML5Message } from './form-fields'
+import { makeDraft, disableSubmitButtons, reportHTML5Message, parseInputValue, setDefaultValues } from './form-fields'
 
 export default {
   props: formakaseProps,
@@ -18,7 +18,9 @@ export default {
   },
 
   mounted() {
-    Vue.set(this.form, "draft", makeDraft(this.collectElements(), true));
+    const elements = this.collectElements()
+    setDefaultValues(elements);
+    Vue.set(this.form, "draft", makeDraft(elements));
 
     this.$refs.form.addEventListener("input", this.onInput);
 
@@ -50,11 +52,7 @@ export default {
     async onInput(e) {
       if (!e.target.name) return;
 
-      let value = e.target.value;
-      // TODO convert dates and other input types
-      if (e.target.type === "number") {
-        value = parseInt(value, 10);
-      }
+      const value = parseInputValue(e.target);
       Vue.set(this.form.draft, e.target.name, value);
 
       if (this.live) {

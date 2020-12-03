@@ -1,17 +1,26 @@
-export function makeDraft(elements, init) {
-  return elements.reduce((acc, el) => {
-    let value = el.value;
-    if (init) {
-      value = el.getAttribute("data-value");
-      el.value = value;
-    }
+export function parseInputValue(element) {
+  if (element.type === "number") {
+    return parseInt(element.value, 10);
+  }
 
-    if (el.type === "number") {
-      value = Number(value);
-    } else if (el.type === "checkbox") {
-      value = el.checked;
-    }
-    // TODO: date, range
+  if (element.type === "checkbox") {
+    return element.checked;
+  }
+
+  // TODO: date, range
+
+  return element.value;
+}
+
+export function setDefaultValues(elements) {
+  elements.forEach((el) => {
+    el.value = el.getAttribute("data-value");
+  })
+}
+
+export function makeDraft(elements) {
+  return elements.reduce((acc, el) => {
+    const value = parseInputValue(el);
 
     acc[el.name] = value;
     return acc;
