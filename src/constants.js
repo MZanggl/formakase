@@ -21,8 +21,8 @@ export const formakaseProps = {
   }
 }
 
-export const defaultForm = {
+export const defaultForm = () => ({
   draft: {},
   pending: false,
   errors: {}
-}
+})

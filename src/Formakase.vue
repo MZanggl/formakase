@@ -14,7 +14,7 @@ export default {
   props: formakaseProps,
 
   data() {
-    return { form: defaultForm, refs: {} };
+    return { form: defaultForm(), refs: {} };
   },
 
   mounted() {
