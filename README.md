@@ -23,14 +23,14 @@ Features
 export default {
   methods: {
     onSubmit(draft) {
-      alert(draft) // { username: '<current input value trimmed>' }
+      alert(draft) // 👈 { username: '<current input value trimmed>' }
     }
   }
 }
 </script>
 ```
 
-### Form with draft access in template
+### Form with draft access in template (using `v-slot`)
 
 ```vue
 <template>
@@ -52,7 +52,7 @@ export default {
 </script>
 ```
 
-### Form with draft access everywhere + mutate form state
+### Form with draft access everywhere + mutate form state (using `v-model`)
 
 ```vue
 <template>
@@ -163,8 +163,8 @@ However, you can provide alternative messages.
 ```vue
 <template>
   <Formakase :messages="messages">
-    <input name="username" />
-    <input type="submit"/>
+    <input name="username" requried minlength="3" />
+    <input type="submit" />
   </Formakase>
 </template>
 
@@ -173,10 +173,10 @@ export default {
   computed: {
     messages() {
       return {
-        valueMissing(element) { // define as a function
+        tooShort: 'This is too short!' // 👈 define message as a string
+        valueMissing(element) { // 👈 or as a function
           return `Field ${element.name} is required!`
         },
-        tooShort: 'This is too short!' // or as a string
       }
     }
   }
@@ -201,7 +201,7 @@ If you need something more complex, pass a custom validate method.
 <script>
 export default {
   methods: {
-    validate(draft, blame) {
+    async validate(draft, blame) { // 👈 Support for async/await
       if (draft.username === 'something-bad') {
         blame('username', 'Dont write something bad!')
       }
