@@ -14,7 +14,7 @@ export default {
   props: formakaseProps,
 
   data() {
-    return { form: defaultForm(), refs: {} };
+    return { form: defaultForm(), refs: {}, observer: null };
   },
 
   computed: {
@@ -31,16 +31,16 @@ export default {
 
     this.$refs.form.addEventListener("input", this.onInput);
 
-    const mutationObserver = new MutationObserver(() => {
+    this.observer = new MutationObserver(() => {
       Vue.set(this.form, "draft", makeDraft(this.collectElements()));
     });
 
-    mutationObserver.observe(this.$refs.form, { childList: true });
+    this.observer.observe(this.$refs.form, { childList: true });
   },
 
   beforeDestroy() {
     this.$refs.form.removeEventListener("input", this.onInput);
-    // TODO disconnect observer beforeDestroy
+    this.observer && this.observer.disconnect()
   },
 
   watch: {
