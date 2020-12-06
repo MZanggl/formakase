@@ -17,6 +17,13 @@ export default {
     return { form: defaultForm(), refs: {} };
   },
 
+  computed: {
+    // make copy to detect changes in watcher
+    draftCopy() {
+      return {...this.form.draft}
+    }
+  },
+
   mounted() {
     const elements = this.collectElements()
     setDefaultValues(elements);
@@ -45,6 +52,19 @@ export default {
         }
       },
       deep: true
+    },
+    draftCopy: {
+      handler(draft, oldDraft) {
+        for (const field of Object.keys(draft)) {
+          if (draft[field] !== oldDraft[field]) {
+            this.$refs.form.elements[field].value = draft[field]
+            if (this.live) {
+              this.validate([this.$refs.form.elements[field]])
+            }
+          }
+        }
+      },
+      deep: true,
     }
   },
 
@@ -60,11 +80,6 @@ export default {
 
       if (this.form.errors[e.target.name]) {
         Vue.delete(this.form.errors, e.target.name);
-      }
-
-      if (this.live) {
-        // TODO: validate v-model changes
-        await this.validate([e.target])
       }
     },
     async validate(elements) {
