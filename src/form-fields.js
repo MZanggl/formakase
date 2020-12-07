@@ -1,13 +1,11 @@
 export function parseInputValue(element) {
-  if (element.type === "number") {
+  if (element.type === "number" || element.type === "range") {
     return parseInt(element.value, 10);
   }
 
   if (element.type === "checkbox") {
     return element.checked;
   }
-
-  // TODO: date, range
 
   return element.value;
 }
